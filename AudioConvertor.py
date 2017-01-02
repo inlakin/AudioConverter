@@ -6,9 +6,11 @@
 #  [*]  Recuperer les métadonnées des pistes
 #  [*]  Progress Bar pendant le calcul du nombre de fichiers
 #  [*]  Afficher avant de commencer un prompt pour prévenir l'utilisateur du nombre de fichiers trouvés à convertir et s'il veut continuer 
-#  [ ]  Gérer les erreurs (try/catch)
+
 #  [ ]  Ignorer les dossiers cachés lors de la recherche. 
-#  
+#  [ ]  Gérer les erreurs (try/catch)
+# 
+#  [ ]  Format dans le fichier d'erreur 
 #  [ ]  Pouvoir proposer un format d'entrée et de sortie et bitrate en ligne de commande
 #  [ ]  Permettre la reprise du travail si interruption
 #  [ ]  (GUI)
@@ -37,34 +39,34 @@ error_files          = []
 
 
 # For printing purposes : instead of printing the absolute path we are in, we print the relative one. 
-def relative_dir_name(dirname):
-    res = re.search(RELATIVE_DIR_PATTERN, str(dirname))
+def relative_dir_name(root):
+    res = re.search(RELATIVE_DIR_PATTERN, str(root))
     if res:
         relative_path = res.group(1)
         return relative_path
     else:
-        print "[-] relative_dir_name(dirname) function :  No match - Exiting .."
+        print "[-] relative_dir_name(root) function :  No match - Exiting .."
         sys.exit(0)
 
 
 # Function that return a new name for the file we are converting (adding the correct extension)
-def new_file_name(filename):
-    new = re.search(FILE_PATTERN, str(filename))
+def new_file_name(file):
+    new = re.search(FILE_PATTERN, str(file))
     if new:
         new_file = new.group(1)
         return new_file
     else:
-        print "[-] new_file_name(filename) function :  No match - Exiting .."
+        print "[-] new_file_name(file) function :  No match - Exiting .."
         sys.exit(0)
 
 
-# Convert filename from the old_dir destination to the new_dir destination 
+# Convert file from the old_dir destination to the new_dir destination 
 # MUST BE IMPROVED WITH the new_extension argument which will induce the writing of other functions (or not.. see pydub)
-def convert(old_dir, new_dir,filename):
+def convert(old_dir, new_dir,file):
 
     print "\t[*] Processing ..."     
-    sound = AudioSegment.from_file(old_dir+ "/" + filename)
-    sound.export(new_dir + "/" + new_file_name(filename), format="mp3", bitrate="192k", tags=mediainfo(old_dir+ "/" + filename).get('TAG',{}))
+    sound = AudioSegment.from_file(old_dir+ "/" + file)
+    sound.export(new_dir + "/" + new_file_name(file), format="mp3", bitrate="192k", tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
     print "\t[*] Done."
 
 
@@ -78,10 +80,12 @@ def convert(old_dir, new_dir,filename):
 spinner = Spinner('[*] Checking number of files to convert, please wait  ')
 
 # Walk on every directories recursively to find how many audio files need to be converted
-for dirname, dirnames, filenames in os.walk(os.getcwd()):
+for root, dirs, files in os.walk(os.getcwd()):
+    files = [f for f in files if not f[0] == '.']
+    dirs[:] = [d for d in dirs if not d[0] == '.']
     spinner.next()
-    for filename in filenames:
-        if ".flac" in filename:
+    for file in files:
+        if ".flac" in file:
             nb_files += 1
 print ""
 print "[*] Finished. %s file(s) found" % nb_files
@@ -89,38 +93,41 @@ print "[*] Finished. %s file(s) found" % nb_files
 proceed = raw_input("[+] Do you want to continue ? (O/n) : ")
 if proceed == 'O' or proceed == 'o':
     print "[*] Continuing."
-    for dirname, dirnames, filenames in os.walk(os.getcwd()):
-        rel_dirname = relative_dir_name(dirname)
+    for root, dirs, files in os.walk(os.getcwd()):
+        files = [f for f in files if not f[0] == '.']
+        dirs[:] = [d for d in dirs if not d[0] == '.']
+        rel_root = relative_dir_name(root)
         
         print ""
-        print "[*] Entering '%s'" % rel_dirname    
-        # for subdirname in dirnames:
-        #     print("[*] Found directory : " + os.path.join(rel_dirname, subdirname))
+        print "[*] Entering '%s'" % rel_root    
+        # for subroot in dirs:
+        #     print("[*] Found directory : " + os.path.join(rel_root, subroot))
 
-        if any("flac" in f for f in filenames):
-            new_dir = dirname + DIR_SUFFIXE
-            print "[*] Found flac file(s) in '%s'" % rel_dirname
+        if any("flac" in f for f in files):
+            new_dir = root + DIR_SUFFIXE
+            print "[*] Found flac file(s) in '%s'" % rel_root
             print "[*] Creating new directory : '%s'" % new_dir
             os.mkdir(new_dir)
 
-        for filename in filenames:
-            if ".flac" in filename:
+        for file in files:
+            if ".flac" in file:
 
-                # f     = os.path.join(rel_dirname, filename)
-                new_f = new_file_name(filename) + FILE_SUFFIXE
+                # f     = os.path.join(rel_root, file)
+                new_f = new_file_name(file) + FILE_SUFFIXE
 
-                print "[*] Converting : '%s' into '%s/%s'" % (filename, relative_dir_name(new_dir), new_f)
+                print "[*] Converting : '%s' into '%s/%s'" % (file, relative_dir_name(new_dir), new_f)
                 try:
-                    convert(dirname, new_dir, filename)
+                    convert(root, new_dir, file)
                     file_converted += 1
-                except UnicodeEncodeError as err_unicode_msg:
+                except Exception, e:
                     has_error = True
-                    print "\t[-] Error" 
+                    print "\t[-] Unable to convert."
+                    print "\t[-] Error : %s " % e 
                     # print "\t[*] Exception : %s" % err_unicode_msg
                     # print "\t[*] Appending the file to the error list"
-                    error_files.append([dirname, filename])
+                    error_files.append([root, file])
 
-        print "[*] Leaving '%s'" % rel_dirname
+        print "[*] Leaving '%s'" % rel_root
 
     print ""
     print "[*] %d file(s) converted." % file_converted
@@ -133,9 +140,9 @@ if proceed == 'O' or proceed == 'o':
                 p.dump(error_files)
             f.close()
             print "[*] Error file created :  'fichiers_erreurs.txt'"
-        except IOError as err_ioerror_msg:
-            print "[-] Unable to open a file"
-            print "[*] Exception : %s " % err_ioerror_msg
+        except Exception, e:
+            print "[-] Unable to create or open the file 'fichiers_erreurs.txt"
+            print "[-] Error : %s " % e
 
 else:
     print "[*] Exiting."
