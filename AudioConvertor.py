@@ -21,6 +21,8 @@ import re
 import sys
 import pickle
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from progress.spinner import Spinner
 from pydub import AudioSegment
 from pydub.utils import mediainfo
