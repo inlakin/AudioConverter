@@ -9,7 +9,10 @@ from pydub.utils import mediainfo
 
 from settings import *
 from progress.spinner import Spinner
+from docopt import docopt
 
+def parse_args(doc):
+    docopt(doc)
 
 def usage():
     """ Procedure that output the usage of the program
