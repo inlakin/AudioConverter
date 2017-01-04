@@ -26,8 +26,8 @@ def search_files(path, original_extension, nb_files):
     
     for root, dirs, files in os.walk(path):
         # Test for not searching into hidden folder(s)
-        # files = [f for f in files if not f[0] == '.']
-        # dirs[:] = [d for d in dirs if not d[0] == '.']
+        files = [f for f in files if not f[0] == '.']
+        dirs[:] = [d for d in dirs if not d[0] == '.']
         spinner.next()
         for file in files:
             if original_extension in file:
@@ -72,8 +72,6 @@ def new_file_name(file, original_extension, new_extension):
         Returns
             str: the new file name (i.e 'Apparat - Circle.mp3')
     """
-    print "new file name ; new_extension %s" % new_extension
-    print "new_file_name(%s,%s,%s)" % (file, original_extension, new_extension)
     pattern_file = r"([^\/\\]+)\." + original_extension + "$"
     res = re.search(pattern_file, str(file))
     if res:
@@ -121,13 +119,10 @@ def convert(old_dir, new_dir,file, original_extension, new_extension, bit):
     """
 
     print "\t[*] Processing ..."   
-    print "\t Args : old_dir %s\n new_dir %s\n file %s\n new_extension %s\n bit %s" % (old_dir, new_dir, file, new_extension, bit)
-    # try:
-    sound = AudioSegment.from_file(old_dir+ "/" + file)
-    sound.export(new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
-    print "\t[*] Done."
-    return True
+    try:
+        sound = AudioSegment.from_file(old_dir+ "/" + file)
+        sound.export(new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
+        print "\t[*] Done."
 
-    # except Exception, e:
-    #     print "\t[-] Error: %s " % e 
-        # return False
+    except Exception, e:
+        print "\t[-] Error: %s " % e 

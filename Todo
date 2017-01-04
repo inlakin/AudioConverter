@@ -3,14 +3,15 @@
 #  [*]  Recuperer les métadonnées des pistes
 #  [*]  Progress Bar pendant le calcul du nombre de fichiers
 #  [*]  Afficher avant de commencer un prompt pour prévenir l'utilisateur du nombre de fichiers trouvés à convertir et s'il veut continuer 
+#  [*]  Arguments ligne de commande (getopt, argparse...)
 
+#  [ ]  Fixing global variables 
 #  [ ]  Ignorer les dossiers cachés lors de la recherche. 
 #  [ ]  Gérer les erreurs (try/catch)
 #  [ ]  Permettre la reprise du travail si interruption (algo à définir)
-#  [ ]
+#  [ ]  Ajouter l'option récursive
 # 
 #  [ ]  Format dans le fichier d'erreur 
-#  [ ]  Arguments ligne de commande (getopt, argparse...)
 
 #  [ ]  (GUI)
 #  

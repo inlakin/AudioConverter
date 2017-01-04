@@ -16,6 +16,7 @@ sys.setdefaultencoding('utf-8')
 #                       #
 # # # # # # # # # # # # #
 
+
 if __name__ == '__main__':
 
     global original_extension
@@ -38,6 +39,9 @@ if __name__ == '__main__':
         if (arguments["--path"] is not None):
             path_to_folder = arguments["--path"]
         
+print "Path to music folder : %s" % path_to_folder
+os.chdir(path_to_folder)
+path_to_folder = os.getcwd()
 
 if check_files:
     if search_files(path_to_folder, original_extension, nb_files):
@@ -49,8 +53,10 @@ if check_files:
 
 
 for root, dirs, files in os.walk(path_to_folder):
-    # files = [f for f in files if not f[0] == '.']
-    # dirs[:] = [d for d in dirs if not d[0] == '.']
+    # Ignoring hidden folders/files recursively
+    files = [f for f in files if not f[0] == '.']
+    dirs[:] = [d for d in dirs if not d[0] == '.']
+
     rel_root = relative_dir_name(root)
 
     print ""
@@ -65,10 +71,6 @@ for root, dirs, files in os.walk(path_to_folder):
             # f     = os.path.join(rel_root, file)
             new_f = new_file_name(file, original_extension, new_extension)
             
-            print "*****"
-            print new_dir
-            print new_f
-            print "*****"
             print "[*] Converting : '%s' into '%s/%s'" % (file, rel_root, new_f)
             
             if convert(root, new_dir, file, original_extension, new_extension, bitrate):
@@ -85,11 +87,11 @@ print "[*] %d file(s) converted." % file_converted
 # Write the audio files that were skipped in a file for logging
 if has_error:
     try:
-        with open(logerror_file, "w") as f:
+        with open(logerror_file, "a") as f:
             p = pickle.Pickler(f)
             p.dump(error_files)
         f.close()
-        print "[*] Error file created :  'fichiers_erreurs.txt'"
+        print "[*] Log file created :  '%s'" % logerror_file
     except Exception, e:
         print "[-] Unable to create or open the file 'fichiers_erreurs.txt"
         print "[-] Error : %s " % e
