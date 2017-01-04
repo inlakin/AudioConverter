@@ -4,40 +4,15 @@
 
 import os
 import re
+import sys
 from pydub import AudioSegment
 from pydub.utils import mediainfo
 
 from settings import *
 from progress.spinner import Spinner
-from docopt import docopt
-
-def parse_args(doc):
-    docopt(doc)
-
-def usage():
-    """ Procedure that output the usage of the program
-
-    """
-    print "\t\t***Audio Convertor***"
-    print ""
-    print "By default, the program runs with the following argument:"
-    print "\t Output Codec = MP3"
-    print "\t Bitrate      = 128k"
-    print "\t Path = %s" % os.getcwd()
-    print ""
-    print "Usage: ./AudioConvertor.py"
-    print ""
-    print "\t-f --from        original codec"
-    print "\t-t --to          destination codec"
-    print "\t-p --path        path towards our music folder"
-    print "\t-b --bitrate     bitrate (32k, 64k, 128k, 192k, 320k)"
-    print ""
-    print "Examples:"
-    print "\t./AudioConvertor.py -t='flac' -t='mp3' -p='/home/user/music/'"
-    print "\t./AudioConvertor.py -t='mp3 -b='192k'"
 
 
-def search_files(path):
+def search_files(path, original_extension, nb_files):
     """ Function that search the number of files to convert, output the result and then ask the user if he wants to proceed with the conversion of the files 
 
         Args:
@@ -58,7 +33,8 @@ def search_files(path):
             if original_extension in file:
                 nb_files += 1
     print ""
-    print "[*] Finished. %s file(s) found" % nb_files
+    print "[*] In directory %s " % path
+    print "[*] Finished. %s %s file(s) found" % (nb_files, original_extension)
 
     proceed = raw_input("[+] Do you want to continue ? (O/n) : ")
     if proceed == 'O' or proceed == 'o':
@@ -76,6 +52,7 @@ def relative_dir_name(root):
         Returns:
             str: The relative path
     """
+    pattern_relative_dir = r"\/([^\/\\]+)$"
 
     res = re.search(pattern_relative_dir, str(root))
     if res:
@@ -86,7 +63,7 @@ def relative_dir_name(root):
         sys.exit(0)
 
 
-def new_file_name(file):
+def new_file_name(file, original_extension, new_extension):
     """ Function that returns the new name of the file we are converting
 
         Args:
@@ -95,37 +72,40 @@ def new_file_name(file):
         Returns
             str: the new file name (i.e 'Apparat - Circle.mp3')
     """
-
+    print "new file name ; new_extension %s" % new_extension
+    print "new_file_name(%s,%s,%s)" % (file, original_extension, new_extension)
+    pattern_file = r"([^\/\\]+)\." + original_extension + "$"
     res = re.search(pattern_file, str(file))
     if res:
-            new_file = new.group(1) + "." + new_extension
+            new_file = res.group(1) + "." + new_extension
             return new_file
     else:
         print "[-] new_file_name(file) function :  No match - Exiting .."
         sys.exit(0)
 
 
-def create_dir(root):
+def create_dir(root, new_extension):
+    
     """ Create a new directory for storing the new converted elements
 
         Args:
-            new_dir (str): Name of the new dir
+            new_dir (str): Name of the directory without the extension
 
         Return:
             bool: True if the creation has succeed, False otherwise
 
     """
-    print "[*] Creating new directory : '%s'" % new_dir
     new_dir = root + " - " + new_extension
+    print "[*] Creating new directory : '%s'" % new_dir
     try:
         os.mkdir(new_dir)
-        return True
+        return new_dir
     except Exception, e:
         print "[-] Error : %s" % e 
         return False
 
 
-def convert(old_dir, new_dir,file, new_extension="mp3", bitrate="128k"):
+def convert(old_dir, new_dir,file, original_extension, new_extension, bit):
 
     """ Function that calls the PyDub library to convert the file passed in argument
 
@@ -141,13 +121,13 @@ def convert(old_dir, new_dir,file, new_extension="mp3", bitrate="128k"):
     """
 
     print "\t[*] Processing ..."   
+    print "\t Args : old_dir %s\n new_dir %s\n file %s\n new_extension %s\n bit %s" % (old_dir, new_dir, file, new_extension, bit)
+    # try:
+    sound = AudioSegment.from_file(old_dir+ "/" + file)
+    sound.export(new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
+    print "\t[*] Done."
+    return True
 
-    try:
-        sound = AudioSegment.from_file(old_dir+ "/" + file)
-        sound.export(new_dir + "/" + new_file_name(file), format="mp3", bitrate="192k", tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
-        print "\t[*] Done."
-        return True
-
-    except Exception, e:
-        print "\t[-] Error: %s " % e 
-        return False
+    # except Exception, e:
+    #     print "\t[-] Error: %s " % e 
+        # return False
