@@ -5,6 +5,8 @@
 import os
 import re
 import sys
+import time
+import datetime
 from pydub import AudioSegment
 from pydub.utils import mediainfo
 
@@ -82,7 +84,46 @@ def new_file_name(file, original_extension, new_extension):
         sys.exit(0)
 
 
-def create_dir(root, new_extension):
+def compare_folder(folder, new_folder, original_extension, new_extension):
+    """ Compare the audio content of two given folder based on the extension provided in parameters
+
+        Args:
+            folder (str) : Path to the old folder containing the previous extension
+            new_folder (str) : Path to the new folder containing the right extension
+            original_extension (str) : old extension (i.e flac)
+            new_extension (str) : new extension (i.e mp3)
+
+        Return : 
+            bool : True if the content is the same, False otherwise 
+
+    """
+    original_files = 0
+    new_files      = 0
+
+    print "[*] Comparing %s to %s" % (folder, new_folder)
+
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            if original_extension in file:
+                original_files +=1
+
+    print "\t[*] %s files to convert in %s" % (original_files, folder)
+
+    for root, dirs, files in os.walk(new_folder):
+        for file in files:
+            if new_extension in file:
+                new_files += 1
+
+    print "\t[*] %s files converted in %s" % (new_files, new_folder)
+
+    if original_files == new_files:
+        return True
+    else:
+        return False
+
+
+
+def create_dir(new_dir):
     
     """ Create a new directory for storing the new converted elements
 
@@ -93,17 +134,19 @@ def create_dir(root, new_extension):
             bool: True if the creation has succeed, False otherwise
 
     """
-    new_dir = root + " - " + new_extension
+
+    global new_folder
+
     print "[*] Creating new directory : '%s'" % new_dir
     try:
         os.mkdir(new_dir)
-        return new_dir
+        return True
     except Exception, e:
         print "[-] Error : %s" % e 
         return False
 
 
-def convert(old_dir, new_dir,file, original_extension, new_extension, bit):
+def convert(old_dir, new_dir,file, original_extension, new_extension, bit, logerr_file):
 
     """ Function that calls the PyDub library to convert the file passed in argument
 
@@ -121,8 +164,16 @@ def convert(old_dir, new_dir,file, original_extension, new_extension, bit):
     print "\t[*] Processing ..."   
     try:
         sound = AudioSegment.from_file(old_dir+ "/" + file)
-        sound.export(new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
+        sound.export(os.getcwd() +"/" + new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
         print "\t[*] Done."
+        return True
 
     except Exception, e:
+        st = time.time()
+        ts = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d %H:%M:%S')
+        logerr = open(logerr_file, 'a')
+        logerr.write("[" + str(ts) + "] File : %s/%s\n" % (old_dir, file))
+        logerr.write("[" + str(ts) + "] %s\n" % e)
+        logerr.close()
         print "\t[-] Error: %s " % e 
+        return False

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import pickle
+import os
 from settings import *
 from functions import *
 from docopt import docopt
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     global check_files
     global path_to_folder
     global new_dir
+    global new_folder
 
     arguments = docopt(docopt_arg, version='0.1')
 
@@ -53,6 +54,7 @@ if check_files:
 
 
 for root, dirs, files in os.walk(path_to_folder):
+    
     # Ignoring hidden folders/files recursively
     files = [f for f in files if not f[0] == '.']
     dirs[:] = [d for d in dirs if not d[0] == '.']
@@ -62,37 +64,46 @@ for root, dirs, files in os.walk(path_to_folder):
     print ""
     print "[*] Entering '%s'" % rel_root    
 
+    # Checking if there is any file matching our extension
     if any(original_extension in f for f in files):
         print "[*] Found %s file(s) in '%s'" % (original_extension, rel_root)
-        new_dir = create_dir(rel_root, new_extension)
+        dir_to_create = rel_root + " - " + new_extension
+        
+        # Checking if a directory for storing our converted files exist already
+        # if it doesn't exist, we create it 
+        if not os.path.isdir(dir_to_create):
+            if not create_dir(dir_to_create):
+                print "[-] Failed to create folder %s " % dir_to_create
+                sys.exit(0)
 
-    for file in files:
-        if original_extension in file:
-            # f     = os.path.join(rel_root, file)
-            new_f = new_file_name(file, original_extension, new_extension)
-            
-            print "[*] Converting : '%s' into '%s/%s'" % (file, rel_root, new_f)
-            
-            if convert(root, new_dir, file, original_extension, new_extension, bitrate):
-                file_converted += 1
+        # If it already exist
+        else:
+            print "[*] Folder %s exist." % dir_to_create
+
+            # We compare the two folders 
+            # If there is the same amount of audio files in both
+            if (compare_folder(rel_root, dir_to_create, original_extension, new_extension)):
+                # We check the integrity of the files in our folder containing the converted audio files
+                print "\t[*] Checking integrity of files"
+
+                # If the integrity is correct, we change folder
+                continue
+
+            # if the content of the two folders is not the same we resume the conversion on the file that are missing 
             else:
-                has_error = True
-                error_files.append([root, file])
+                print "[*] Resuming conversion in %s " % rel_root
+            
+        for file in files:
+            if original_extension in file:
+                # f     = os.path.join(rel_root, file)
+                new_f = new_file_name(file, original_extension, new_extension)
+                
+                print "[*] Converting : '%s' into '%s/%s'" % (file, dir_to_create, new_f)
+                
+                if convert(root, dir_to_create, file, original_extension, new_extension, bitrate, logerror_file):
+                    file_converted += 1
 
     print "[*] Leaving '%s'" % rel_root
 
 print ""
 print "[*] %d file(s) converted." % file_converted
-
-# Write the audio files that were skipped in a file for logging
-if has_error:
-    try:
-        with open(logerror_file, "a") as f:
-            p = pickle.Pickler(f)
-            p.dump(error_files)
-        f.close()
-        print "[*] Log file created :  '%s'" % logerror_file
-    except Exception, e:
-        print "[-] Unable to create or open the file 'fichiers_erreurs.txt"
-        print "[-] Error : %s " % e
-

@@ -22,24 +22,23 @@ Options:
 
 """
 
-# AudioConverter.py [--from=<codec>] [--to=<codec>] [--path=<path>] [--bitrate=<bitrate>] [--output_file=<file>]
 from os import getcwd
 
-# Extensions (i.e 'mp3', 'flac', 'ogg' ...)
 
 original_extension = ""               # Must not be null
 new_extension      = ""               # Optional, default : mp3
 bitrate            = ""               # Optional, default : 128k
 path_to_folder     = getcwd()         # Optional, default is the current folder
 check_files        = False
-
+logerr_file        = ""
 new_dir            = ""
 new_folder         = None
+
+nb_converted_file  = 0
+
 
 
 nb_files           = 0
 file_converted     = 0
-has_error          = False
-error_files        = []
 
 docopt_arg         = __doc__

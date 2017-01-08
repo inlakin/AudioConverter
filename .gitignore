@@ -1,2 +1,5 @@
 Music/
 *.pyc
+*mp3/
+.git-*
+*.txt
