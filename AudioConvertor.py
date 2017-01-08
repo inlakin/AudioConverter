@@ -59,15 +59,15 @@ for root, dirs, files in os.walk(path_to_folder):
     files = [f for f in files if not f[0] == '.']
     dirs[:] = [d for d in dirs if not d[0] == '.']
 
-    rel_root = relative_dir_name(root)
+    # rel_root = relative_dir_name(root)
 
     print ""
-    print "[*] Entering '%s'" % rel_root    
+    print "[*] Entering '%s'" % root    
 
     # Checking if there is any file matching our extension
     if any(original_extension in f for f in files):
-        print "[*] Found %s file(s) in '%s'" % (original_extension, rel_root)
-        dir_to_create = rel_root + " - " + new_extension
+        print "[*] Found %s file(s) in '%s'" % (original_extension, root)
+        dir_to_create = root + " - " + new_extension
         
         # Checking if a directory for storing our converted files exist already
         # if it doesn't exist, we create it 
@@ -82,7 +82,7 @@ for root, dirs, files in os.walk(path_to_folder):
 
             # We compare the two folders 
             # If there is the same amount of audio files in both
-            if (compare_folder(rel_root, dir_to_create, original_extension, new_extension)):
+            if (compare_folder(root, dir_to_create, original_extension, new_extension)):
                 # We check the integrity of the files in our folder containing the converted audio files
                 print "\t[*] Checking integrity of files"
 
@@ -91,7 +91,7 @@ for root, dirs, files in os.walk(path_to_folder):
 
             # if the content of the two folders is not the same we resume the conversion on the file that are missing 
             else:
-                print "[*] Resuming conversion in %s " % rel_root
+                print "[*] Resuming conversion in %s " % root
             
         for file in files:
             if original_extension in file:
@@ -103,7 +103,7 @@ for root, dirs, files in os.walk(path_to_folder):
                 if convert(root, dir_to_create, file, original_extension, new_extension, bitrate, logerror_file):
                     file_converted += 1
 
-    print "[*] Leaving '%s'" % rel_root
+    print "[*] Leaving '%s'" % root
 
 print ""
 print "[*] %d file(s) converted." % file_converted

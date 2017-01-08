@@ -160,11 +160,11 @@ def convert(old_dir, new_dir,file, original_extension, new_extension, bit, loger
         Return:
             bool: True if the conversion has been successful, False otherwise
     """
-
+    print "Converting into %s " % new_dir
     print "\t[*] Processing ..."   
     try:
         sound = AudioSegment.from_file(old_dir+ "/" + file)
-        sound.export(os.getcwd() +"/" + new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
+        sound.export(new_dir + "/" + new_file_name(file, original_extension, new_extension), format=new_extension, bitrate=bit, tags=mediainfo(old_dir+ "/" + file).get('TAG',{}))
         print "\t[*] Done."
         return True
 
