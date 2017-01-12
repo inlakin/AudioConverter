@@ -19,7 +19,6 @@ def init():
     global nb_converted_file
     global nb_files
     global file_converted
-    global docopt_arg
 
 
     global files_to_convert

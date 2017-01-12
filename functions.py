@@ -86,13 +86,12 @@ def new_file_name(file):
 
 def nb_files_to_convert(folder):
     """ Return the number of files to convert in a specific folder
-
+    
     Args:
         The folder to check in 
 
     Return:
         (int) : the number of files to convert
-
     """
     original_files = 0
 
@@ -103,7 +102,6 @@ def nb_files_to_convert(folder):
 
     return original_files
 
-
 def compare_folder(folder, new_folder):
     """ Procedure that compare the audio content of two given folder based on the extension provided in parameters
         It is updating the global variables files_to_convert and files_to_check in order to access them in the main loop
@@ -111,6 +109,9 @@ def compare_folder(folder, new_folder):
         Args:
             folder (str) : Path to the old folder containing the previous extension
             new_folder (str) : Path to the new folder containing the right extension
+
+        Return : 
+            bool : True if the content is the same, False otherwise 
 
     """
     original_files   = []
@@ -200,8 +201,6 @@ def compare_folder(folder, new_folder):
         else:
             print "[*] Exiting program"
             sys.exit(0)
-
-    
     
     # if len(original_files) == len(new_files):
     #     print "[*] Checking integrity"
