@@ -1,17 +1,46 @@
 # TODO
 # 
+#   # # # # # # # # # # # # # # 
+#   
+#   [*]     Fini
+#   [--]    En cours
+#   [ ]     TOOD
+# 
+#   # # # # # # # # # # # # # #   
+# 
+# 
 #  [*]  Recuperer les métadonnées des pistes
 #  [*]  Progress Bar pendant le calcul du nombre de fichiers
 #  [*]  Afficher avant de commencer un prompt pour prévenir l'utilisateur du nombre de fichiers trouvés à convertir et s'il veut continuer 
 #  [*]  Arguments ligne de commande (getopt, argparse...)
-
-#  [ ]  Fixing global variables 
-#  [ ]  Ignorer les dossiers cachés lors de la recherche. 
-#  [ ]  Gérer les erreurs (try/catch)
-#  [ ]  Permettre la reprise du travail si interruption (algo à définir)
-#  [ ]  Ajouter l'option récursive
-# 
-#  [ ]  Format dans le fichier d'erreur 
-
-#  [ ]  (GUI)
+#  [*]  Fixing global variables 
+#  [*]  Ignorer les dossiers cachés lors de la recherche.  
+#  [*]  Format dans le fichier d'erreur 
 #  
+#  [--]  ProgressBar pendant la conversion d'un dossier avec affichage du nom du fichier en cours de conversion
+#       [ ] Affichage du fichier en cours de conversion en mode carriage return
+
+#  [--]  Permettre la reprise du travail si interruption (algo à définir)
+# 
+#       [*] 1. Check les répertoires pour vérifier le nombre de fichiers à convertir et le nombre de fichiers potentiellement convertis 
+#               [*] SI il y a un dossier du type "dossier_a_convertir - nouvelle_extension" ALORS
+#                   [*] Compare le contenu du dossier "dossier_a_convertir et "dossier_a_convertir - nouvelle_extension"
+# 
+#       [ ] 2.  SI le nombre de fichiers convertis est différent ou égal du nombre de celui à convertir, ALORS
+#           [ ]   SI il y a des fichiers manquants ALORS
+#                       [ ] On ajoute les noms des fichiers manquants à une liste de fichiers à convertir (i.e a_convertir = [])
+#                 FSI
+#           [ ]   On check l'intégrité des fichiers déjà convertis
+#           [ ]   On ajoute les fichiers dont l'intégrité est corrompu à la liste a_convertir
+#           [ ]   On lance la conversion pour les fichiers manquants et les fichiers corrompus
+#           [ ]   SINON
+#                   [ ] On lance la conversion depuis le début (i.e "dossier_a_convertir - nouvelle_extension" n'existe pas)
+#                  
+#
+#  [--]  Gérer les erreurs (try/catch)
+#
+#  [ ]  Gestion logfile / logerr approfondie (définition du contenu)
+#                       
+#  [ ]  Ajouter l'option récursive
+#  [ ]  (GUI)
+#  [ ] If 0 files found during check, exit
