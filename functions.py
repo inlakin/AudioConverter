@@ -7,6 +7,8 @@ import re
 import sys
 import time
 import datetime
+
+from termcolor import colored
 from pydub import AudioSegment
 from pydub.utils import mediainfo
 
@@ -102,6 +104,15 @@ def nb_files_to_convert(folder):
 
     return original_files
 
+
+def print_files_to_convert():
+
+    print ""
+    print "[*] Files to convert in queue"
+    for f in settings.files_to_convert:
+        print "    -  %s" % f
+    print ""
+
 def compare_folder(folder, new_folder):
     """ Procedure that compare the audio content of two given folder based on the extension provided in parameters
         It is updating the global variables files_to_convert and files_to_check in order to access them in the main loop
@@ -120,21 +131,21 @@ def compare_folder(folder, new_folder):
     
     # file_pattern     = r"(^[\w\W]+)\.[\w]+$"
 
-    print "[*] Comparing %s to %s" % (folder, new_folder)
+    print "[*] Comparing %s to %s" % (relative_dir_name(folder), relative_dir_name(new_folder))
 
     # Walking into the dir we want to convert to find the original files
     for root, dirs, files in os.walk(folder):
         for file in files:
             if settings.original_extension in file:
                 original_files.append(file)
-    print "\t[*] %s files to convert in %s" % (len(original_files), folder)
+    print "\t[*] %s files to convert in %s" % (len(original_files), relative_dir_name(folder))
 
     # Walking into the dir that exist to check which files are created
     for root, dirs, files in os.walk(new_folder):
         for file in files:
             if settings.new_extension in file:
                 new_files.append(file)
-    print "\t[*] %s files converted in %s" % (len(new_files), new_folder)
+    print "\t[*] %s files converted in %s" % (len(new_files), relative_dir_name(new_folder))
 
 
 
@@ -146,44 +157,18 @@ def compare_folder(folder, new_folder):
         else:
             settings.files_to_convert.append(old_f)
 
-    # for elt in original_files:
-    #     res1 = re.search(file_pattern, str(elt))
-    #     if res1:
-    #         tmp_list_original.append(res1.group(1))
-
-    # for elt in new_files:
-    #     res1 = re.search(file_pattern, str(elt))
-    #     if res1:
-    #         tmp_list_new.append(res1.group(1))
-
-    # for elt in tmp_list_original:
-    #     if any(elt in f for f in tmp_list_new):
-    #         settings.files_to_check.append(elt + "." + settings.new_extension)
-    #     else:
-    #         settings.files_to_convert(elt + "." + settings.old_extension)
-
-    # for f_old in original_files:
-    #     res1 = re.search(file_pattern, str(f_old))
-    #     if res1:
-    #         if any(f_old in f_new for f_new in new_files):
-    #             res2 = re.search(file_pattern, str(f_new))
-    #             if res2:
-    #                 if res1.group(1) == res2.group(1):
-    #                     settings.files_to_check.append(f_new)
-    #                 else:
-    #                     settings.files_to_convert.append(new_folder + "/" + f_old)
-    #             else:
-    #                 print "[*] No match found"
 
     if len(settings.files_to_convert) != 0:
-        print "[*] Need to convert :"
+        print ""
+        print "\t[*] Need to convert :"
         for f in settings.files_to_convert:
-            print "\t[*] %s" % f
+            print "\t\t[*] %s" % f
 
     if len(settings.files_to_check) != 0:
-        print "[*] Need to check integrity for : "
+        print ""
+        print "\t[*] Need to check integrity for : "
         for f in settings.files_to_check:
-            print "\t[*] %s " % f
+            print "\t\t[*] %s " % f
 
         proceed = raw_input("[*] Continue with files integrity check ? (O/n) : ")
 
@@ -191,13 +176,16 @@ def compare_folder(folder, new_folder):
             for f in settings.files_to_check:
                 file_check = new_folder + "/" + f
                 # s = AudioSegment.from_mp3(file_check)
-                print file_check
                 check = mediainfo(file_check)
                 if check:
-                    print "[*] Integrity PASSED for %s" % f
+                    print "[*] Integrity" + colored(" PASSED ", 'green')  + "for %s" % f
                 else:
-                    print "[*] Integrity FAILED for %s" % f
-                    # settings.files_to_convert.append(file_check)
+                    print "[" + colored("-","red") + "] Integrity" + colored(" FAILED ", 'red')  + "for %s" % f
+                    settings.files_to_convert.append(file_check)
+            
+            print ""
+            raw_input("Press any key to continue ... ")
+            print ""
         else:
             print "[*] Exiting program"
             sys.exit(0)

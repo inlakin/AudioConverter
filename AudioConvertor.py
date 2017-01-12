@@ -103,9 +103,8 @@ for root, dirs, files in os.walk(settings.path_to_folder):
             compare_folder(root, settings.dir_to_create)
                 # We check the integrity of the files in our folder containing the converted audio files
             # if settings.files_to_convert is not None:
-            if settings.files_to_convert is not None:
-                for f in settings.files_to_convert:
-                    print "[*] in MAIN Need to convert %s " % f
+            if len(settings.files_to_convert) != 0 :
+                print_files_to_convert()
             else:
                 print "[*[ Head is up to date"
             # if the content of the two folders is not the same we resume the conversion on the file that are missing 

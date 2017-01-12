@@ -40,7 +40,7 @@
 #  [--]  Gérer les erreurs (try/catch)
 #
 #  [ ]  Gestion logfile / logerr approfondie (définition du contenu)
-#                       
 #  [ ]  Ajouter l'option récursive
 #  [ ]  (GUI)
 #  [ ] If 0 files found during check, exit
+#  [ ] path option fix
