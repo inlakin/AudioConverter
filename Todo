@@ -40,6 +40,8 @@
 #  [--]  Gérer les erreurs (try/catch)
 #  
 #  [ ] Recursif problem in Compare Folder
+#       -> checking number of files to convert in current folder and not recursively (to update the progressbar)
+#       -> 
 #  
 #  [ ]  Gestion logfile / logerr approfondie (définition du contenu)
 #  [ ]  Ajouter l'option récursive
