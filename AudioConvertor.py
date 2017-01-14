@@ -113,10 +113,14 @@ for root, dirs, files in os.walk(settings.path_to_folder):
                 bar = Bar("Converting files in queue", max=nb_files_convert)
                 
                 for f in settings.files_to_convert:
-                    traceback_original_names(f)
+                    # traceback_original_names(f)
+                    bar.next()
+                    old_dir = ""
+                    old_file = ""
+                    old_dir, old_file = os.path.split(f)
+                    if convert(old_dir, old_file):
+                        settings.file_converted += 1
 
-                    raw_input("Press any key to continue ... ")
-                    print "In %s, converting %s " % (queue_dir, queue_file)
 
             else:
                 print "[*[ Head is up to date"

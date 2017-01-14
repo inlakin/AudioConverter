@@ -181,7 +181,9 @@ def compare_folder(folder, new_folder):
                     print "[*] Integrity" + colored(" PASSED ", 'green')  + "for %s" % f
                 else:
                     print "[" + colored("-","red") + "] Integrity" + colored(" FAILED ", 'red')  + "for %s" % f
-                    settings.files_to_convert.append(file_check)
+                    traceback_original_names(file_check)
+                    # print "Appending %s/%s to files_to_convert" % (settings.queue_dir, settings.queue_file)    
+                    settings.files_to_convert.append(settings.queue_dir + "/" + settings.queue_file)
             
             print ""
             raw_input("Press any key to continue ... ")
@@ -255,28 +257,33 @@ def convert(old_dir,file):
 
 
 def traceback_original_names(basename):
+    """ Updates globals queue_dir and queue_file
 
+    Args:
+        basename (str) : path to a 
+
+    """
     tmp_queue_dir = ""
     tmp_queue_file = ""
     basename_tmp_queue_file = ""
     original_dir_pattern = r"([\w\W]+)\ \-\ mp3"
 
-
+    # Handle global settings.queue_dir
     tmp_queue_dir, tmp_queue_file = os.path.split(basename)
     res = re.search(original_dir_pattern, tmp_queue_dir)
     
+
     if res:
         settings.queue_dir = res.group(1)
     else:
         print "ERR: traceback_original_names(): no match found for %s " % tmp_queue_dir
         sys.exit(0)
 
-
+    # Handle global queue_file
     basename_tmp_queue_file = os.path.splitext(tmp_queue_file)
+    settings.queue_file = basename_tmp_queue_file[0] + "." + settings.original_extension
 
-    settings.queue_file = basename_tmp_queue_file[0] + ".flac"
 
-
-    print "Traceback returned\n\tPath: %s\n\tFile: %s" % (settings.queue_dir, settings.queue_file)
+    # print "Traceback returned\n\tPath: %s\n\tFile: %s" % (settings.queue_dir, settings.queue_file)
 
 
