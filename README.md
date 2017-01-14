@@ -12,7 +12,7 @@ These instructions will get you a copy of the project up and running on your loc
 Fetch the project using :
 
 ```
-$ git clone https://github.com/inlakesh/AudioConverter.git
+$ git clone https://github.com/inlakin/AudioConverter.git
 ```
 
 Move into the project
@@ -89,12 +89,12 @@ No tests implemented yet .. :(
 
 ## Authors
 
-* **Robin Desir** - *Initial work* - [inlakesh](https://github.com/inlakesh)
+* **Robin Desir** - *Initial work* - [inlakin](https://github.com/inlakin)
 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/inlakesh/AudioConverter/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/inlakin/AudioConverter/LICENSE.md) file for details
 
 ## Acknowledgments
 
