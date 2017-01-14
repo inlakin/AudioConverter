@@ -26,6 +26,8 @@ def init():
     global files_to_convert
     global files_to_check
     
+    global skip_folder
+
     original_extension = ""               # Must not be null
     new_extension      = ""               # Optional, default : mp3
     bitrate            = ""               # Optional, default : 128k
@@ -44,3 +46,5 @@ def init():
     
     files_to_convert   = []
     files_to_check     = []
+
+    skip_folder = False

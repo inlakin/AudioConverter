@@ -74,6 +74,7 @@ if settings.check_files:
 
 for root, dirs, files in os.walk(settings.path_to_folder):
     
+    skip_folder = False
     # Ignoring hidden folders/files recursively
     files = [f for f in files if not f[0] == '.']
     dirs[:] = [d for d in dirs if not d[0] == '.']
@@ -121,11 +122,13 @@ for root, dirs, files in os.walk(settings.path_to_folder):
                     if convert(old_dir, old_file):
                         settings.file_converted += 1
 
+                bar.finish()
 
             else:
                 print "[*[ Head is up to date"
+            
+            skip_folder = True
             # if the content of the two folders is not the same we resume the conversion on the file that are missing 
-            print "[*] Resuming conversion in %s " % root
         
         nb_files_convert = nb_files_to_convert(root)
 
@@ -133,17 +136,19 @@ for root, dirs, files in os.walk(settings.path_to_folder):
 
         # print "[*] NB FILES TO CONVERT : %d" % nb_files_to_convert
 
-        for file in files:
-            if settings.original_extension in file:
-                # f     = os.path.join(rel_root, file)
-                new_f = new_file_name(file)
-                bar.next()
-                
-                print "[*] Converting : '%s' into '%s/%s'\r" % (file, relative_dir_name(settings.dir_to_create), new_f)
-                
+        if not skip_folder:
 
-                if convert(root, file):
-                    settings.file_converted += 1
+            for file in files:
+                if settings.original_extension in file:
+                    # f     = os.path.join(rel_root, file)
+                    new_f = new_file_name(file)
+                    bar.next()
+                    
+                    print "[*] Converting : '%s' into '%s/%s'\r" % (file, relative_dir_name(settings.dir_to_create), new_f)
+                    
+
+                    if convert(root, file):
+                        settings.file_converted += 1
 
         bar.finish()
 

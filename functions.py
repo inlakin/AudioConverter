@@ -121,9 +121,6 @@ def compare_folder(folder, new_folder):
             folder (str) : Path to the old folder containing the previous extension
             new_folder (str) : Path to the new folder containing the right extension
 
-        Return : 
-            bool : True if the content is the same, False otherwise 
-
     """
     original_files   = []
     new_files        = []
@@ -137,23 +134,26 @@ def compare_folder(folder, new_folder):
     for root, dirs, files in os.walk(folder):
         for file in files:
             if settings.original_extension in file:
-                original_files.append(file)
+                original_files.append(root+ "/" +file)
     print "\t[*] %s files to convert in %s" % (len(original_files), relative_dir_name(folder))
 
     # Walking into the dir that exist to check which files are created
     for root, dirs, files in os.walk(new_folder):
         for file in files:
             if settings.new_extension in file:
-                new_files.append(file)
+                new_files.append(root + "/" + file)
     print "\t[*] %s files converted in %s" % (len(new_files), relative_dir_name(new_folder))
 
 
 
     for old_f in original_files:
-        basename_old_f = os.path.splitext(old_f)
+
+        dirname, filename = os.path.split(old_f)
+        basename_old_f = os.path.splitext(filename)
 
         if any(basename_old_f[0] in new_f for new_f in new_files):
             settings.files_to_check.append(basename_old_f[0] + "." + settings.new_extension)
+
         else:
             settings.files_to_convert.append(old_f)
 
@@ -162,13 +162,13 @@ def compare_folder(folder, new_folder):
         print ""
         print "\t[*] Need to convert :"
         for f in settings.files_to_convert:
-            print "\t\t[*] %s" % f
+            print "\t\t- %s" % f
 
     if len(settings.files_to_check) != 0:
         print ""
         print "\t[*] Need to check integrity for : "
         for f in settings.files_to_check:
-            print "\t\t[*] %s " % f
+            print "\t\t- %s " % f
 
         proceed = raw_input("[*] Continue with files integrity check ? (O/n) : ")
         print ""
