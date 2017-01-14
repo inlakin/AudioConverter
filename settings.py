@@ -20,10 +20,12 @@ def init():
     global nb_files
     global file_converted
 
+    global queue_dir
+    global queue_file
 
     global files_to_convert
     global files_to_check
-
+    
     original_extension = ""               # Must not be null
     new_extension      = ""               # Optional, default : mp3
     bitrate            = ""               # Optional, default : 128k
@@ -32,10 +34,13 @@ def init():
     path_to_folder     = getcwd()         # Optional, default is the current folder
     dir_to_create      = ""
     new_folder         = None
-
+    
     nb_converted_file  = 0
     nb_files           = 0
     file_converted     = 0
-
-    files_to_convert = []
-    files_to_check = []
+    
+    queue_dir          = ""
+    queue_file         = ""
+    
+    files_to_convert   = []
+    files_to_check     = []

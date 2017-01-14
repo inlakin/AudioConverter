@@ -171,7 +171,7 @@ def compare_folder(folder, new_folder):
             print "\t\t[*] %s " % f
 
         proceed = raw_input("[*] Continue with files integrity check ? (O/n) : ")
-
+        print ""
         if proceed == "O" or proceed == "o":
             for f in settings.files_to_check:
                 file_check = new_folder + "/" + f
@@ -185,7 +185,6 @@ def compare_folder(folder, new_folder):
             
             print ""
             raw_input("Press any key to continue ... ")
-            print ""
         else:
             print "[*] Exiting program"
             sys.exit(0)
@@ -253,3 +252,31 @@ def convert(old_dir,file):
         logerr.close()
         print "\t[-] Error: %s " % e 
         return False
+
+
+def traceback_original_names(basename):
+
+    tmp_queue_dir = ""
+    tmp_queue_file = ""
+    basename_tmp_queue_file = ""
+    original_dir_pattern = r"([\w\W]+)\ \-\ mp3"
+
+
+    tmp_queue_dir, tmp_queue_file = os.path.split(basename)
+    res = re.search(original_dir_pattern, tmp_queue_dir)
+    
+    if res:
+        settings.queue_dir = res.group(1)
+    else:
+        print "ERR: traceback_original_names(): no match found for %s " % tmp_queue_dir
+        sys.exit(0)
+
+
+    basename_tmp_queue_file = os.path.splitext(tmp_queue_file)
+
+    settings.queue_file = basename_tmp_queue_file[0] + ".flac"
+
+
+    print "Traceback returned\n\tPath: %s\n\tFile: %s" % (settings.queue_dir, settings.queue_file)
+
+

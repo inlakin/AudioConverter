@@ -102,9 +102,22 @@ for root, dirs, files in os.walk(settings.path_to_folder):
             # We compare the two folders 
             compare_folder(root, settings.dir_to_create)
                 # We check the integrity of the files in our folder containing the converted audio files
+            
             # if settings.files_to_convert is not None:
             if len(settings.files_to_convert) != 0 :
+                
                 print_files_to_convert()
+                
+                nb_files_convert = len(settings.files_to_convert)
+                
+                bar = Bar("Converting files in queue", max=nb_files_convert)
+                
+                for f in settings.files_to_convert:
+                    traceback_original_names(f)
+
+                    raw_input("Press any key to continue ... ")
+                    print "In %s, converting %s " % (queue_dir, queue_file)
+
             else:
                 print "[*[ Head is up to date"
             # if the content of the two folders is not the same we resume the conversion on the file that are missing 
