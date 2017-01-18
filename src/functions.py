@@ -97,10 +97,16 @@ def nb_files_to_convert(folder):
     """
     original_files = 0
 
-    for root, dirs, files in os.walk(folder):
-        for file in files:
-            if settings.original_extension in file:
-                original_files +=1
+    ls_original_folder = os.listdir(folder)
+
+    for elt in ls_original_folder:
+        if settings.original_extension in elt:
+            original_files += 1
+
+    # for root, dirs, files in os.walk(folder):
+    #     for file in files:
+    #         if settings.original_extension in file:
+    #             original_files +=1
 
     return original_files
 
@@ -113,6 +119,7 @@ def print_files_to_convert():
         print "    -  %s" % f
     print ""
 
+
 def compare_folder(folder, new_folder):
     """ Procedure that compare the audio content of two given folder based on the extension provided in parameters
         It is updating the global variables files_to_convert and files_to_check in order to access them in the main loop
@@ -122,38 +129,40 @@ def compare_folder(folder, new_folder):
             new_folder (str) : Path to the new folder containing the right extension
 
     """
-    original_files   = []
-    new_files        = []
-    # integrity      = True
     
-    # file_pattern     = r"(^[\w\W]+)\.[\w]+$"
+    ls_original_folder        = []
+    ls_new_folder             = []
+    original_files            = []
+    new_files                 = []
+    
+    settings.files_to_check   = []
+    settings.files_to_convert = []
+    
 
     print "[*] Comparing %s to %s" % (relative_dir_name(folder), relative_dir_name(new_folder))
 
-    # Walking into the dir we want to convert to find the original files
-    for root, dirs, files in os.walk(folder, topdown=False):
-        for file in files:
-            if settings.original_extension in file:
-                original_files.append(root+ "/" +file)
-    print "\t[*] %s files to convert in %s" % (len(original_files), relative_dir_name(folder))
+    ls_original_folder = os.listdir(folder)
+    ls_new_folder      = os.listdir(new_folder)
 
-    # Walking into the dir that exist to check which files are created
-    for root, dirs, files in os.walk(new_folder):
-        for file in files:
-            if settings.new_extension in file:
-                new_files.append(root + "/" + file)
-    print "\t[*] %s files converted in %s" % (len(new_files), relative_dir_name(new_folder))
+    #   Populating the list of files to convert
+    for elt in ls_original_folder:
+        if settings.original_extension in elt:
+            original_files.append(folder + "/" + elt)
 
+    #   Populating the files already converted
+    for elt in ls_new_folder:
+        if settings.new_extension in elt:
+            new_files.append(folder + "/" + elt)
 
+    print "\t[*] %d files to convert" % len(original_files)
+    print "\t[*] %d files in destination folder" % len(new_files)
 
+    #   Generating a list of files to convert if not converted and a list of files that need an integrity check
     for old_f in original_files:
+        base_old_f = os.path.splitext(os.path.basename(old_f))
 
-        dirname, filename = os.path.split(old_f)
-        basename_old_f = os.path.splitext(filename)
-
-        if any(basename_old_f[0] in new_f for new_f in new_files):
-            settings.files_to_check.append(basename_old_f[0] + "." + settings.new_extension)
-
+        if any(base_old_f[0] in new_f for new_f in new_files):
+            settings.files_to_check.append(new_folder + "/" + base_old_f[0] + "." + settings.new_extension)
         else:
             settings.files_to_convert.append(old_f)
 
@@ -162,47 +171,59 @@ def compare_folder(folder, new_folder):
         print ""
         print "\t[*] Need to convert :"
         for f in settings.files_to_convert:
-            print "\t\t- %s" % f
+            print "\t\t- %s" % relative_dir_name(f)
 
     if len(settings.files_to_check) != 0:
         print ""
         print "\t[*] Need to check integrity for : "
         for f in settings.files_to_check:
-            print "\t\t- %s " % f
+            print "\t\t- %s " % relative_dir_name(f)
 
-        proceed = raw_input("[*] Continue with files integrity check ? (O/n) : ")
+        print "[*] Launching integrity check .."
         print ""
-        if proceed == "O" or proceed == "o":
-            for f in settings.files_to_check:
-                file_check = new_folder + "/" + f
-                # s = AudioSegment.from_mp3(file_check)
-                check = mediainfo(file_check)
-                if check:
-                    print "[*] Integrity" + colored(" PASSED ", 'green')  + "for %s" % f
-                else:
-                    print "[" + colored("-","red") + "] Integrity" + colored(" FAILED ", 'red')  + "for %s" % f
-                    traceback_original_names(file_check)
-                    # print "Appending %s/%s to files_to_convert" % (settings.queue_dir, settings.queue_file)    
-                    settings.files_to_convert.append(settings.queue_dir + "/" + settings.queue_file)
-            
-            print ""
-            raw_input("Press any key to continue ... ")
-        else:
-            print "[*] Exiting program"
-            sys.exit(0)
-    
-    # if len(original_files) == len(new_files):
-    #     print "[*] Checking integrity"
-    #     if integrity == True:
-    #         print "[*] Moving to next folder"
-    #     else:
-    #         print "[*] Integrity check failed for "
+        for f in settings.files_to_check:
+            # s = AudioSegment.from_mp3(file_check)
+            check = mediainfo(f)
+            if check:
+                print "[*] Integrity" + colored(" PASSED ", 'green')  + "for %s" % relative_dir_name(f)
+            else:
+                print "[" + colored("-","red") + "] Integrity" + colored(" FAILED ", 'red')  + "for %s" % f
+                logerr = open(settings.logerr_file, 'a')
+                st = time.time()
+                ts = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d %H:%M:%S')
+                logerr = open(settings.logerr_file, "a")
+                logerr.write("[" + str(ts) + "]\n")
+                logerr.write("Integrity FAILED for %s" % f)
+                logerr.close()
+                traceback_original_names(f)
+                # print "Appending %s/%s to files_to_convert" % (settings.queue_dir, settings.queue_file)    
+                settings.files_to_convert.append(settings.queue_dir + "/" + settings.queue_file)
+        
+        print ""
 
+        removeTmpFile("/tmp/")
+   
+def removeTmpFile(folder):
     
-    # if original_files == new_files:
-    #     return True
-    # else:
-    #     return False
+    pattern = r"tmp[\w\W]+"
+    ls_folder = os.listdir(folder)
+
+    for elt in ls_folder:
+        res = re.search(pattern, elt)
+        if res:
+            try:
+                os.remove(folder + "/" + elt)
+                st = time.time()
+                ts = datetime.datetime.fromtimestamp(st).strftime('%Y-%m-%d %H:%M:%S')
+                logerr = open(settings.logerr_file, "a")
+                logerr.write("[" + str(ts) + "]\n")
+                logerr.write("[*] Deleting tmp audio file %s/%s" % (folder,elt))
+                logerr.close()
+            except Exception, e:
+                print e
+
+    print "%s is clean" % folder
+
 
 
 def create_dir():
@@ -252,7 +273,11 @@ def convert(old_dir,file):
         logerr.write("\tFile : %s/%s\n" % (old_dir, file))
         logerr.write("\t%s\n" % e)
         logerr.close()
-        print "\t[-] Error: %s " % e 
+        print "\t[-] Error: %s " % e
+        
+        settings.files_not_converted.append(old_dir + "/" + file)
+        settings.nb_files_not_converted += 1 
+        
         return False
 
 

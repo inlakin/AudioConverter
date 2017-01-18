@@ -7,6 +7,7 @@ Programm that permits to convert a music folder into another codec (i.e flac to 
  
 Usage:
     AudioConverter.py <original_codec> [options]
+    AudioConverter.py <original_codec> [--check] [--path=path/to/folder]
     AudioConverter.py -h | --help
     AudioConverter.py -v | --version
  
@@ -54,12 +55,14 @@ if __name__ == '__main__':
         settings.check_files        = arguments["--check"]
 
         if (arguments["--path"] is not None):
-            path_to_folder = arguments["--path"]
+            settings.path_to_folder = arguments["--path"]
         
-print "Path to music folder : %s" % settings.path_to_folder
+
 
 os.chdir(settings.path_to_folder)
 settings.path_to_folder = os.getcwd()
+
+print "Path to music folder : %s" % settings.path_to_folder
 
 nb_files_convert = 0
 
@@ -156,3 +159,17 @@ for root, dirs, files in os.walk(settings.path_to_folder):
 
 print ""
 print "[*] %d file(s) converted." % settings.file_converted
+
+if settings.nb_files_not_converted != 0:
+    
+    print "[*] %d files not converted (see logerr.txt)" % settings.nb_files_not_converted
+
+    logerr = open(settings.logerr_file, "a")
+    logerr.write("*************************************")
+    logerr.write("FILES NOT CONVERTED")
+    logerr.write("*************************************")
+    
+    for elt in settings.files_not_converted:
+        logerr.write("\n" + elt)
+
+    logerr.close()

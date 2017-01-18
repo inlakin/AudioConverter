@@ -16,36 +16,18 @@
 #  [*]  Fixing global variables 
 #  [*]  Ignorer les dossiers cachés lors de la recherche.  
 #  [*]  Format dans le fichier d'erreur 
+#  [*]  Path option fix
+#  [*]  Recursif problem in Compare Folder
+#  [*]  Permettre la reprise du travail si interruption (+ integrity check)          
 #  
 #  [--]  ProgressBar pendant la conversion d'un dossier avec affichage du nom du fichier en cours de conversion
 #       [ ] Affichage du fichier en cours de conversion en mode carriage return
-
-#  [--]  Permettre la reprise du travail si interruption (algo à définir)
-# 
-#       [*] 1. Check les répertoires pour vérifier le nombre de fichiers à convertir et le nombre de fichiers potentiellement convertis 
-#               [*] SI il y a un dossier du type "dossier_a_convertir - nouvelle_extension" ALORS
-#                   [*] Compare le contenu du dossier "dossier_a_convertir et "dossier_a_convertir - nouvelle_extension"
-# 
-#       [ ] 2.  SI le nombre de fichiers convertis est différent ou égal du nombre de celui à convertir, ALORS
-#           [ ]   SI il y a des fichiers manquants ALORS
-#                       [ ] On ajoute les noms des fichiers manquants à une liste de fichiers à convertir (i.e a_convertir = [])
-#                 FSI
-#           [ ]   On check l'intégrité des fichiers déjà convertis
-#           [ ]   On ajoute les fichiers dont l'intégrité est corrompu à la liste a_convertir
-#           [ ]   On lance la conversion pour les fichiers manquants et les fichiers corrompus
-#           [ ]   SINON
-#                   [ ] On lance la conversion depuis le début (i.e "dossier_a_convertir - nouvelle_extension" n'existe pas)
-#                  
 #
 #  [--]  Gérer les erreurs (try/catch)
 #  
-#  [ ] Recursif problem in Compare Folder
-#       -> checking number of files to convert in current folder and not recursively (to update the progressbar)
-#       -> 
 #  
 #  [ ]  Gestion logfile / logerr approfondie (définition du contenu)
 #  [ ]  Ajouter l'option récursive
 #  [ ]  (GUI)
 #  [ ] If 0 files found during check, exit
-#  [ ] path option fix
 
