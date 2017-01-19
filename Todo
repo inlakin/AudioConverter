@@ -29,5 +29,7 @@
 #  [ ]  Gestion logfile / logerr approfondie (définition du contenu)
 #  [ ]  Ajouter l'option récursive
 #  [ ]  (GUI)
-#  [ ] If 0 files found during check, exit
+#  [ ]  If 0 files found during check, exit
+#  [ ]  Adding interruption keys control (like skiping folder)
+#  [ ]  Adding a global progress bar at the bottom (necessit the --check flag)
 

@@ -63,8 +63,10 @@ def relative_dir_name(root):
         relative_path = res.group(1)
         return relative_path
     else:
+        logerr = open(settings.logerr_file, "a")
+        logerr.write("\nERR : REL_DIR_NAME, No match for %s" % root)
+        logerr.close()
         print "[-] relative_dir_name(root) function :  No match - Exiting .."
-        sys.exit(0)
 
 
 def new_file_name(file):
@@ -82,8 +84,10 @@ def new_file_name(file):
             new_file = res.group(1) + "." + settings.new_extension
             return new_file
     else:
-        print "[-] new_file_name(file) function :  No match - Exiting .."
-        sys.exit(0)
+        logerr = open(settings.logerr_file, "a")
+        logerr.write("\nERR : NEW_FILE_NAME(), No match for %s" % file)
+        logerr.close()
+        print "[-] new_file_name(file) function :  No match"
 
 
 def nb_files_to_convert(folder):
@@ -203,6 +207,7 @@ def compare_folder(folder, new_folder):
 
         removeTmpFile("/tmp/")
    
+   
 def removeTmpFile(folder):
     
     pattern = r"tmp[\w\W]+"
@@ -223,7 +228,6 @@ def removeTmpFile(folder):
                 print e
 
     print "%s is clean" % folder
-
 
 
 def create_dir():
