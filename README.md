@@ -75,10 +75,10 @@ If the user wants to proceed with the conversion, a new folder will be created f
 
 ## Example
 
-![alt text](https://github.com/inlakin/AudioConverter/output1.gif "Example 1")
+![Example 1](https://raw.githubusercontent.com/inlakin/AudioConverter/master/output.gif "Example 1")
 
 
-![alt text](https://github.com/inlakin/AudioConverter/output2.gif "Example 2")
+![Example 2](https://raw.githubusercontent.com/inlakin/AudioConverter/master/output.gif "Example 2")
 
 ## License
 
