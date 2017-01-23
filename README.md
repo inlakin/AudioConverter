@@ -27,16 +27,8 @@ and resolve the dependencies using the following command
 $ pip install -r requirements.txt
 ```
 
-### Installing
 
-
-After resolving the dependencies, you should run the **settings.py** file, 
-
-```
-$ settings.py 
-```
-
-Now you are all set up. 
+for practical usage, I recommend adding the folder to the path. 
 
 
 ### Usage examples
@@ -81,23 +73,16 @@ This command will first check all the *flac* files in the *path/to/music/folder*
 
 If the user wants to proceed with the conversion, a new folder will be created for storing each of the converted folder (i.e If we are converting the *"Apparat"* folder that contains only flac files, a new folder *"Apparat - mp3"* will be created containing all the mp3 files.)
 
+## Example
 
-## Running the tests
-
-No tests implemented yet .. :(
+![alt text](https://github.com/inlakin/AudioConverter/output1.gif "Example 1")
 
 
-## Authors
-
-* **Robin Desir** - *Initial work* - [inlakin](https://github.com/inlakin)
-
+![alt text](https://github.com/inlakin/AudioConverter/output2.gif "Example 2")
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/inlakin/AudioConverter/LICENSE.md) file for details
 
-## Acknowledgments
-
-* Yet to come
 
 
