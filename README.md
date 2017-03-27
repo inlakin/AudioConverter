@@ -73,6 +73,11 @@ This command will first check all the *flac* files in the *path/to/music/folder*
 
 If the user wants to proceed with the conversion, a new folder will be created for storing each of the converted folder (i.e If we are converting the *"Apparat"* folder that contains only flac files, a new folder *"Apparat - mp3"* will be created containing all the mp3 files.)
 
+## GIF
+
+![Output](http://github.com/inlakin/AudioConverter/output.gif)
+![Output 2](http://github.com/inlakin/AudioConverter/output2.gif)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/inlakin/AudioConverter/LICENSE.md) file for details
