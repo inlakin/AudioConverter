@@ -75,8 +75,8 @@ If the user wants to proceed with the conversion, a new folder will be created f
 
 ## GIF
 
-![Output](http://github.com/inlakin/AudioConverter/output.gif)
-![Output 2](http://github.com/inlakin/AudioConverter/output2.gif)
+![Output](http://github.com/inlakin/AudioConverter/blob/master/output.gif)
+![Output 2](http://github.com/inlakin/AudioConverter/blob/master/output2.gif)
 
 ## License
 
